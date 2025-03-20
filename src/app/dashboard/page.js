@@ -84,7 +84,6 @@ export default function Dashboard() {
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-50">
-      {/* Header - Responsive para todas las pantallas */}
       <header className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-zinc-900/95 backdrop-blur">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
           <div className="flex gap-2 items-center text-xl font-bold">
@@ -93,7 +92,6 @@ export default function Dashboard() {
             <span className="sm:hidden">LB</span>
           </div>
           
-          {/* Menú para móviles */}
           <div className="sm:hidden">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -108,13 +106,11 @@ export default function Dashboard() {
             </button>
           </div>
           
-          {/* Menú para desktop */}
           <div className="hidden sm:flex items-center gap-4">
             <Logout />
           </div>
         </div>
         
-        {/* Menú móvil expandido */}
         {mobileMenuOpen && (
           <div className="sm:hidden bg-zinc-900 border-b border-zinc-800">
             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -127,7 +123,6 @@ export default function Dashboard() {
       </header>
       
       <main className="flex-1">
-        {/* Sección Hero - Responsive */}
         <section className="w-full py-8 md:py-16 lg:py-24 bg-zinc-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col items-center gap-4 text-center">
@@ -140,7 +135,6 @@ export default function Dashboard() {
                 </p>
               </div>
               
-              {/* Formulario - Responsive */}
               <div className="w-full max-w-2xl mt-4 px-4 sm:px-0">
                 <form onSubmit={handleSubmit} className="flex w-full flex-col gap-2 sm:flex-row">
                   <div className="flex-1">
@@ -163,7 +157,6 @@ export default function Dashboard() {
                 
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                 
-                {/* URL acortada - Responsive */}
                 {shortenedUrl && (
                   <div className="mt-4 p-3 sm:p-4 bg-zinc-800 rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
                     <a 
@@ -188,7 +181,6 @@ export default function Dashboard() {
           </div>
         </section>
         
-        {/* Sección URLs recientes - Responsive */}
         <section className="w-full py-8 md:py-16 lg:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mx-auto flex max-w-3xl flex-col items-center gap-2 sm:gap-4 text-center">
@@ -200,7 +192,6 @@ export default function Dashboard() {
               </p>
             </div>
             
-            {/* Lista de URLs - Responsive */}
             <div className="mx-auto mt-6 sm:mt-8 max-w-5xl">
               <div className="rounded-lg border border-zinc-800 bg-zinc-900 shadow-md overflow-hidden">
                 <div className="p-3 sm:p-6">
@@ -213,7 +204,6 @@ export default function Dashboard() {
                             key={url.id}
                             className="flex flex-col gap-2 rounded-lg border border-zinc-800 p-3 sm:p-4 hover:bg-zinc-800/50 transition-colors"
                           >
-                            {/* URL corta - Responsive */}
                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                               <span className="font-medium text-blue-400 text-sm break-all">{fullShortUrl}</span>
                               <button 
@@ -225,13 +215,13 @@ export default function Dashboard() {
                               </button>
                             </div>
                             
-                            {/* URL original - Responsive */}
+                            
                             <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-400">
                               <ExternalLink className="size-3.5 flex-shrink-0" />
                               <span className="truncate">{url.original_url}</span>
                             </div>
                             
-                            {/* Metadata - Responsive */}
+                            {/* Metadata */}
                             <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-400 mt-1 border-t border-zinc-800 pt-2">
                               <Clock className="size-3.5 flex-shrink-0" />
                               <span>{new Date(url.created_at).toLocaleDateString()}</span>
@@ -256,7 +246,6 @@ export default function Dashboard() {
         </section>
       </main>
       
-      {/* Footer - Responsive */}
       <footer className="w-full border-t border-zinc-800 py-4 sm:py-6">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-2 sm:gap-4 md:flex-row md:gap-8">
           <p className="text-center text-xs sm:text-sm leading-loose text-zinc-400 md:text-left">
