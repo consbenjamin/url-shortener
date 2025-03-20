@@ -34,16 +34,13 @@ export async function fetchRecentURLs(userId) {
   const { data, error } = await supabase
     .from('short_urls')
     .select('id, original_url, short_code, created_at')
-    .eq('user_id', userId)  // 🔥 Filtra por usuario autenticado
-    .order('created_at', { ascending: false }) // 🔥 Ordenar por fecha de creación
-    .limit(5); // Limita a las últimas 5 URLs
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(5); 
 
   if (error) {
     console.error('Error al obtener URLs:', error);
     return [];
   }
-
-  console.log('URLs obtenidas:', data); // 🔥 Debugging
-
   return data;
 }
