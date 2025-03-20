@@ -33,7 +33,6 @@ export default function Register() {
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-50">
-      {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-zinc-900/95 backdrop-blur">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
           <div className="flex gap-2 items-center text-xl font-bold">
@@ -44,7 +43,6 @@ export default function Register() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
         <div className="w-full max-w-md rounded-lg border border-zinc-800 bg-zinc-900 p-6 sm:p-8 shadow-lg">
           <h2 className="text-xl sm:text-2xl font-semibold text-center text-zinc-50 mb-6">Crear una cuenta</h2>
@@ -110,7 +108,6 @@ export default function Register() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="w-full border-t border-zinc-800 py-4 sm:py-6">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-2 sm:gap-4">
           <p className="text-center text-xs sm:text-sm leading-loose text-zinc-400">
