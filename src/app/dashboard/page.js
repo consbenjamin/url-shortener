@@ -18,6 +18,8 @@ export default function Dashboard() {
   const [copyMessage, setCopyMessage] = useState('');
   const [copiedUrl, setCopiedUrl] = useState(null);
   const [loadingShorten, setLoadingShorten] = useState(false);
+  const [customSlug, setCustomSlug] = useState('');
+
   const router = useRouter();
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function Dashboard() {
     e.preventDefault();
     setError('');
     setLoadingShorten(true);
-    
+  
     if (!originalUrl) {
       setError('Por favor ingresa una URL.');
       setLoadingShorten(false);
@@ -60,20 +62,27 @@ export default function Dashboard() {
     }
   
     try {
-      const result = await createShortenedURL(originalUrl);
-      if (result.shortenedUrl) {
+      const result = await createShortenedURL(originalUrl, customSlug);
+  
+      if (result.error) {
+        setError(result.error);
+      } else if (result.shortenedUrl) {
         setShortenedUrl(result.shortenedUrl);
-          const user = await checkSession();
-          if (user?.id) {
-            await loadRecentUrls(user.id);
-          }
+        const user = await checkSession();
+        if (user?.id) {
+          await loadRecentUrls(user.id);
+        }
       }
     } catch (err) {
-      setError('Hubo un error al acortar el URL.');
+      setError('Hubo un error al acortar la URL.');
       console.error(err);
     }
+  
     setLoadingShorten(false);
   };
+  
+  
+  
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text)
@@ -154,7 +163,7 @@ export default function Dashboard() {
               
               <div className="w-full max-w-2xl mt-4 px-4 sm:px-0">
                 <form onSubmit={handleSubmit} className="flex w-full flex-col gap-2 sm:flex-row">
-                  <div className="flex-1">
+                  <div className="flex-1 flex flex-col gap-2">
                     <input
                       type="url"
                       placeholder="Pega tu URL larga aquí"
@@ -162,6 +171,14 @@ export default function Dashboard() {
                       onChange={(e) => setOriginalUrl(e.target.value)}
                       required
                       className="h-12 w-full flex rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Slug personalizado (opcional)"
+                      value={customSlug}
+                      onChange={(e) => setCustomSlug(e.target.value)}
+                      className="h-12 w-full rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
                     />
                   </div>
                   <button 

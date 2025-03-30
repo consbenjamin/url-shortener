@@ -1,35 +1,55 @@
 import { supabase } from "@/lib/supabaseClient";
 
-export async function createShortenedURL(originalUrl) {
+export async function createShortenedURL(originalUrl, customSlug = '') {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error("No hay sesión activa");
 
-  // Verificar si la URL ya ha sido acortada por el usuario
-  const { data: existingUrls, error } = await supabase
+  // Verificar si el usuario ya acortó esta URL
+  const { data: existingUrls, error: existingError } = await supabase
     .from('short_urls')
     .select('short_code')
     .eq('user_id', session.user.id)
     .eq('original_url', originalUrl)
     .maybeSingle();
 
-  if (error) {
-    console.error('Error al verificar URL existente:', error);
+  if (existingError) {
+    console.error('Error al verificar URL existente:', existingError);
     throw new Error('Error al verificar URL existente');
   }
 
   if (existingUrls) {
-    // Si la URL ya fue acortada, devolver el short_code existente
     return { shortenedUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/${existingUrls.short_code}` };
   }
 
-  // Si la URL no ha sido acortada, proceder a acortarla
+  // Si el usuario ingresó un custom slug, verificar que no exista
+  if (customSlug) {
+    const { data: existingSlug, error: slugError } = await supabase
+      .from('short_urls')
+      .select('id')
+      .eq('short_code', customSlug)
+      .maybeSingle();
+
+    if (slugError) {
+      console.error('Error al verificar el slug:', slugError);
+      throw new Error('Error al verificar el slug');
+    }
+
+    if (existingSlug) {
+      return { error: 'El slug ya está en uso. Elige otro.' };
+    }
+  }
+
+  // Generar un slug aleatorio si no se proporciona uno
+  const shortCode = customSlug || Math.random().toString(36).substr(2, 6);
+
+  // Guardar en Supabase usando la API
   const res = await fetch('/api/shorten', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${session.access_token}`
     },
-    body: JSON.stringify({ originalUrl }),
+    body: JSON.stringify({ originalUrl, shortCode }),
   });
 
   if (!res.ok) {

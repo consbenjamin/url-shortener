@@ -2,12 +2,12 @@ import { supabase } from "@/lib/supabaseClient";
 
 export async function POST(req) {
   try {
-    const { originalUrl } = await req.json();
+    const { originalUrl, shortCode } = await req.json();
     if (!originalUrl) {
       return Response.json({ error: 'URL requerida' }, { status: 400 });
     }
 
-    // Obtener el token de autenticación desde los headers
+    // Obtener el token de autenticación
     const authHeader = req.headers.get("Authorization");
     const token = authHeader?.split(" ")[1];
 
@@ -15,25 +15,37 @@ export async function POST(req) {
       return Response.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    // Obtener el usuario autenticado desde el token
+    // Obtener el usuario autenticado
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
     if (authError || !user) {
       return Response.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    // Generar un código corto único
-    const shortCode = Math.random().toString(36).substring(2, 8);
+    // Verificar si el slug ya está en uso
+    if (shortCode) {
+      const { data: existingSlug } = await supabase
+        .from('short_urls')
+        .select('id')
+        .eq('short_code', shortCode)
+        .maybeSingle();
 
-    // Guardar en Supabase con el `user_id`
+      if (existingSlug) {
+        return Response.json({ error: 'El slug ya está en uso. Elige otro.' }, { status: 400 });
+      }
+    }
+
+    // Generar un slug aleatorio si no hay custom slug
+    const finalShortCode = shortCode || Math.random().toString(36).substring(2, 8);
+
+    // Guardar en Supabase
     const { data, error } = await supabase
       .from('short_urls')
-      .insert([{ original_url: originalUrl, short_code: shortCode, user_id: user.id }])
+      .insert([{ original_url: originalUrl, short_code: finalShortCode, user_id: user.id }])
       .select();
 
     if (error) throw error;
 
-    return Response.json({ shortenedUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/${shortCode}` });
+    return Response.json({ shortenedUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/${finalShortCode}` });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
