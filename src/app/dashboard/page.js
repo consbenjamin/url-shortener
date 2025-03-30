@@ -6,6 +6,7 @@ import { checkSession } from '@/lib/auth';
 import Logout from '@/components/Logout';
 import { createShortenedURL, fetchRecentURLs } from '@/lib/url';
 import { Link, Clipboard, ExternalLink, Clock, Menu, X } from 'lucide-react';
+import { motion } from "framer-motion";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -14,12 +15,15 @@ export default function Dashboard() {
   const [recentUrls, setRecentUrls] = useState([]);
   const [error, setError] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [copyMessage, setCopyMessage] = useState('');
+  const [copiedUrl, setCopiedUrl] = useState(null);
+  const [loadingShorten, setLoadingShorten] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const verifySession = async () => {
       const user = await checkSession();
-      if (!user) {
+      if (!user || !user.id) {  // Verificar que realmente tenga un ID
         router.push('/login');
       } else {
         setLoading(false);
@@ -31,20 +35,27 @@ export default function Dashboard() {
   }, [router]);
 
   const loadRecentUrls = async (userId) => {
+    if (!userId) {
+      console.error("El userId es requerido para obtener URLs recientes");
+      return;  // Evitar que se haga la petición con un userId inválido
+    }
+    
     try {
       const urls = await fetchRecentURLs(userId);
       setRecentUrls(urls);
     } catch (err) {
-      console.error('Error al obtener las URLs recientes', err);
+      console.error("Error al obtener las URLs recientes", err);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoadingShorten(true);
     
     if (!originalUrl) {
       setError('Por favor ingresa una URL.');
+      setLoadingShorten(false);
       return;
     }
   
@@ -52,22 +63,23 @@ export default function Dashboard() {
       const result = await createShortenedURL(originalUrl);
       if (result.shortenedUrl) {
         setShortenedUrl(result.shortenedUrl);
-
-        const user = await checkSession();
-        if (user) {
-          await loadRecentUrls(user.id);
-        }
+          const user = await checkSession();
+          if (user?.id) {
+            await loadRecentUrls(user.id);
+          }
       }
     } catch (err) {
       setError('Hubo un error al acortar el URL.');
       console.error(err);
     }
+    setLoadingShorten(false);
   };
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text)
       .then(() => {
-        alert('URL copiada al portapapeles');
+        setCopiedUrl(text); // Guardamos la URL copiada
+        setTimeout(() => setCopiedUrl(null), 2000); // Se resetea después de 2 seg
       })
       .catch(err => {
         console.error('Error al copiar: ', err);
@@ -122,7 +134,12 @@ export default function Dashboard() {
         )}
       </header>
       
-      <main className="flex-1">
+      <motion.main 
+        className="flex-1"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <section className="w-full py-8 md:py-16 lg:py-24 bg-zinc-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col items-center gap-4 text-center">
@@ -150,14 +167,19 @@ export default function Dashboard() {
                   <button 
                     type="submit"
                     className="h-12 mt-2 sm:mt-0 items-center justify-center rounded-md bg-blue-600 px-4 sm:px-8 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:pointer-events-none disabled:opacity-50"
+                    disabled={loadingShorten}
                   >
-                    Acortar URL
+                    {loadingShorten ? (
+                      <div className="size-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      "Acortar URL"
+                    )}
                   </button>
                 </form>
                 
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                 
-                {shortenedUrl && (
+                {shortenedUrl && shortenedUrl.startsWith('http') && (
                   <div className="mt-4 p-3 sm:p-4 bg-zinc-800 rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
                     <a 
                       href={shortenedUrl} 
@@ -171,8 +193,7 @@ export default function Dashboard() {
                       onClick={() => copyToClipboard(shortenedUrl)}
                       className="inline-flex size-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 ml-auto"
                     >
-                      <Clipboard className="size-4" />
-                      <span className="sr-only">Copiar</span>
+                      {copyMessage === shortenedUrl ? "✅" : <Clipboard className="size-4" />}
                     </button>
                   </div>
                 )}
@@ -208,10 +229,18 @@ export default function Dashboard() {
                               <span className="font-medium text-blue-400 text-sm break-all">{fullShortUrl}</span>
                               <button 
                                 onClick={() => copyToClipboard(fullShortUrl)}
-                                className="inline-flex size-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 ml-auto"
+                                className="relative inline-flex size-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 ml-auto"
                               >
                                 <Clipboard className="size-4" />
                                 <span className="sr-only">Copiar</span>
+
+                                <span
+                                  className={`absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 text-white text-xs px-2 py-1 rounded-md transition-opacity ${
+                                    copiedUrl === fullShortUrl ? "opacity-100 scale-100" : "opacity-0 scale-90"
+                                  }`}
+                                >
+                                  ¡Copiado!
+                                </span>
                               </button>
                             </div>
                             
@@ -244,7 +273,7 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
-      </main>
+      </motion.main>
       
       <footer className="w-full border-t border-zinc-800 py-4 sm:py-6">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-2 sm:gap-4 md:flex-row md:gap-8">

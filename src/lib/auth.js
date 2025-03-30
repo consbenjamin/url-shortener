@@ -1,4 +1,4 @@
-import { supabase } from "./supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 
 // Iniciar sesión con correo y contraseña
 export const signInWithEmail = async (email, password) => {
@@ -50,14 +50,11 @@ export const signOut = async () => {
 };
 // Verificar si hay una sesión activa
 export async function checkSession() {
-  const { data, error } = await supabase.auth.getSession();
-  
-  if (error || !data.session) {
-    console.error('Error al obtener la sesión:', error);
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
     return null;
   }
-
-  return data.session.user; // Asegurar que devuelve el usuario
+  return data.user; // Asegurar que retornamos un objeto user con un id
 }
 
 // Obtener el usuario autenticado
