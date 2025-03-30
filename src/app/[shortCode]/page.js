@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation';
 
 
 export default async function Page({ params }) {
-  if (!params) return null; // Asegura que params está definido
+  if (!params) return null;
 
-  const { shortCode } = await params; // Asegura que params sea esperado correctamente
+  const { shortCode } = await params;
 
   const { data, error } = await supabase
     .from('short_urls')

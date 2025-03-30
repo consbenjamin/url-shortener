@@ -1,6 +1,6 @@
 'use client';
 
-import { signOut } from "@/lib/auth";  // Importa la función de signOut
+import { signOut } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
 export default function Logout() {
@@ -8,10 +8,10 @@ export default function Logout() {
 
   const handleLogout = async () => {
     try {
-      const success = await signOut();  // Llama a la función signOut para cerrar sesión
+      const success = await signOut();
       if (success) {
         console.log('Sesión cerrada');
-        router.push("/login");  // Redirige al usuario a la página de login después de cerrar sesión
+        router.push("/login");
       }
     } catch (err) {
       console.error('Error al cerrar sesión:', err);

@@ -23,7 +23,7 @@ export default function Dashboard() {
   useEffect(() => {
     const verifySession = async () => {
       const user = await checkSession();
-      if (!user || !user.id) {  // Verificar que realmente tenga un ID
+      if (!user || !user.id) {
         router.push('/login');
       } else {
         setLoading(false);
@@ -37,7 +37,7 @@ export default function Dashboard() {
   const loadRecentUrls = async (userId) => {
     if (!userId) {
       console.error("El userId es requerido para obtener URLs recientes");
-      return;  // Evitar que se haga la petición con un userId inválido
+      return;
     }
     
     try {
@@ -78,8 +78,8 @@ export default function Dashboard() {
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text)
       .then(() => {
-        setCopiedUrl(text); // Guardamos la URL copiada
-        setTimeout(() => setCopiedUrl(null), 2000); // Se resetea después de 2 seg
+        setCopiedUrl(text);
+        setTimeout(() => setCopiedUrl(null), 2000);
       })
       .catch(err => {
         console.error('Error al copiar: ', err);
