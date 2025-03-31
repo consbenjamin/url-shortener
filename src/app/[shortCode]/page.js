@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { redirect } from 'next/navigation';
 
 export default async function Page({ params }) {
-  if (!params) return <h1>URL no encontrada</h1>;
+  if (!params) return <h1>URL no encontrada </h1>;
 
   const { shortCode } = params;
 
