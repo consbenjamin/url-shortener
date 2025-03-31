@@ -64,7 +64,7 @@ export async function fetchRecentURLs(userId) {
 
   const { data, error } = await supabase
     .from('short_urls')
-    .select('id, original_url, short_code, created_at')
+    .select('id, original_url, short_code, created_at, clicks')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
     .limit(5);
@@ -76,4 +76,16 @@ export async function fetchRecentURLs(userId) {
 
   return data || [];
 }
+
+export async function incrementClickCount(shortCode) {
+  const { error } = await supabase
+    .from('short_urls')
+    .update({ clicks: supabase.raw('clicks + 1') })
+    .eq('short_code', shortCode);
+
+  if (error) {
+    console.error('Error al incrementar clics:', error);
+  }
+}
+
 

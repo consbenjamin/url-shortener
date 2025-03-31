@@ -16,7 +16,6 @@ export default function Dashboard() {
   const [error, setError] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [copyMessage, setCopyMessage] = useState('');
-  const [copiedUrl, setCopiedUrl] = useState(null);
   const [loadingShorten, setLoadingShorten] = useState(false);
   const [customSlug, setCustomSlug] = useState('');
 
@@ -87,8 +86,8 @@ export default function Dashboard() {
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text)
       .then(() => {
-        setCopiedUrl(text);
-        setTimeout(() => setCopiedUrl(null), 2000);
+        setCopyMessage(text);
+        setTimeout(() => setCopyMessage(''), 2000);
       })
       .catch(err => {
         console.error('Error al copiar: ', err);
@@ -234,56 +233,43 @@ export default function Dashboard() {
               <div className="rounded-lg border border-zinc-800 bg-zinc-900 shadow-md overflow-hidden">
                 <div className="p-3 sm:p-6">
                   <div className="flex flex-col gap-3 sm:gap-4">
-                    {recentUrls.length > 0 ? (
-                      recentUrls.map((url) => {
-                        const fullShortUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${url.short_code}`;
-                        return (
-                          <div
-                            key={url.id}
-                            className="flex flex-col gap-2 rounded-lg border border-zinc-800 p-3 sm:p-4 hover:bg-zinc-800/50 transition-colors"
-                          >
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                              <span className="font-medium text-blue-400 text-sm break-all">{fullShortUrl}</span>
-                              <button 
-                                onClick={() => copyToClipboard(fullShortUrl)}
-                                className="relative inline-flex size-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 ml-auto"
-                              >
-                                <Clipboard className="size-4" />
-                                <span className="sr-only">Copiar</span>
-
-                                <span
-                                  className={`absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 text-white text-xs px-2 py-1 rounded-md transition-opacity ${
-                                    copiedUrl === fullShortUrl ? "opacity-100 scale-100" : "opacity-0 scale-90"
-                                  }`}
-                                >
-                                  ¡Copiado!
-                                </span>
-                              </button>
-                            </div>
-                            
-                            
-                            <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-400">
-                              <ExternalLink className="size-3.5 flex-shrink-0" />
-                              <span className="truncate">{url.original_url}</span>
-                            </div>
-                            
-                            {/* Metadata */}
-                            <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-400 mt-1 border-t border-zinc-800 pt-2">
-                              <Clock className="size-3.5 flex-shrink-0" />
-                              <span>{new Date(url.created_at).toLocaleDateString()}</span>
-                              {url.clicks !== undefined && (
-                                <div className="ml-auto flex items-center gap-1">
-                                  <span className="text-xs font-medium">{url.clicks}</span>
-                                  <span className="text-xs">clicks</span>
-                                </div>
-                              )}
-                            </div>
+                  {recentUrls.length > 0 ? (
+                    recentUrls.map((url) => {
+                      const fullShortUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${url.short_code}`;
+                      return (
+                        <div key={url.id} className="flex flex-col gap-2 rounded-lg border border-zinc-800 p-3 sm:p-4 hover:bg-zinc-800/50 transition-colors">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                            <span className="font-medium text-blue-400 text-sm break-all">{fullShortUrl}</span>
+                            <button 
+                              onClick={() => copyToClipboard(fullShortUrl)}
+                              className="relative inline-flex size-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 ml-auto"
+                            >
+                              {copyMessage === fullShortUrl ? "✅" : <Clipboard className="size-4" />}
+                            </button>
                           </div>
-                        );
-                      })
-                    ) : (
-                      <p className="text-center text-zinc-400 py-4">No hay URLs recientes.</p>
-                    )}
+                          
+                          <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-400">
+                            <ExternalLink className="size-3.5 flex-shrink-0" />
+                            <span className="truncate">{url.original_url}</span>
+                          </div>
+                          
+                          {/* Mostrar la cantidad de clics aquí */}
+                          <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-400 mt-1 border-t border-zinc-800 pt-2">
+                            <Clock className="size-3.5 flex-shrink-0" />
+                            <span>{new Date(url.created_at).toLocaleDateString()}</span>
+                            {url.clicks !== undefined && (
+                              <div className="ml-auto flex items-center gap-1">
+                                <span className="text-xs font-medium">{url.clicks}</span>
+                                <span className="text-xs">clicks</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-center text-zinc-400 py-4">No hay URLs recientes.</p>
+                  )}
                   </div>
                 </div>
               </div>

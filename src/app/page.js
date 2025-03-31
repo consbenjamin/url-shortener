@@ -74,7 +74,7 @@ export default function Home() {
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl">
             Acorta tus URLs fácilmente, obtén estadísticas detalladas y controla el tráfico de manera eficiente con
-            nuestra plataforma avanzada.
+            nuestra plataforma.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-16">
@@ -93,6 +93,7 @@ export default function Home() {
             <div className="relative bg-slate-900 p-1 rounded-xl overflow-hidden border border-slate-800">
               <Image
                 src="/images/dashboard-preview.png"
+                priority
                 alt="Vista previa del Dashboard"
                 width={1200}
                 height={800}
@@ -129,9 +130,9 @@ export default function Home() {
             <div className="h-12 w-12 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-4">
               <BarChart3 className="h-6 w-6 text-cyan-400" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">Estadísticas Detalladas</h3>
+            <h3 className="text-xl font-semibold text-white mb-2">Estadísticas Basicas</h3>
             <p className="text-slate-300">
-              Analiza el rendimiento de tus enlaces con métricas avanzadas y gráficos interactivos.
+              Analiza el rendimiento de tus enlaces con métricas avanzadas.
             </p>
           </div>
 

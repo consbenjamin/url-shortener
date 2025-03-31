@@ -1,15 +1,14 @@
 import { supabase } from '@/lib/supabaseClient';
 import { redirect } from 'next/navigation';
 
-
 export default async function Page({ params }) {
-  if (!params) return null;
+  if (!params) return <h1>URL no encontrada</h1>;
 
-  const { shortCode } = await params;
+  const { shortCode } = params;
 
   const { data, error } = await supabase
     .from('short_urls')
-    .select('original_url')
+    .select('original_url, clicks')
     .eq('short_code', shortCode)
     .single();
 
@@ -17,9 +16,12 @@ export default async function Page({ params }) {
     return <h1>URL no encontrada</h1>;
   }
 
-  // Redirecciona a la URL original
-  return (
-    <meta httpEquiv="refresh" content={`0;url=${data.original_url}`} />
-  );
-}
+  // Incrementar el contador de clics
+  await supabase
+    .from('short_urls')
+    .update({ clicks: data.clicks + 1 })
+    .eq('short_code', shortCode);
 
+  // Redirigir a la URL original
+  redirect(data.original_url);
+}
