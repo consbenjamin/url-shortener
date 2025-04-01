@@ -21,7 +21,7 @@ export async function POST(req) {
     }
 
     if (shortCode) {
-      const { data: existingSlug } = await supabase
+      const { data: existingSlug } = await supabase 
         .from('short_urls')
         .select('id')
         .eq('short_code', shortCode)
