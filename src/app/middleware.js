@@ -5,12 +5,12 @@ export function middleware(req) {
   const token = cookies().get('supabase-auth-token');
 
   if (!token && req.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', req.url)); // Redirige a login si no hay token
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  return NextResponse.next(); // Deja pasar si el usuario tiene token
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'], // Aplica a todas las rutas dentro de /dashboard
+  matcher: ['/dashboard/:path*'],
 };

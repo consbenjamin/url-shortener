@@ -253,7 +253,6 @@ export default function Dashboard() {
                             <span className="truncate">{url.original_url}</span>
                           </div>
                           
-                          {/* Mostrar la cantidad de clics aquí */}
                           <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-400 mt-1 border-t border-zinc-800 pt-2">
                             <Clock className="size-3.5 flex-shrink-0" />
                             <span>{new Date(url.created_at).toLocaleDateString()}</span>

@@ -42,7 +42,6 @@ export async function createShortenedURL(originalUrl, customSlug = '') {
   // Generar un slug aleatorio si no se proporciona uno
   const shortCode = customSlug || Math.random().toString(36).substr(2, 6);
 
-  // Guardar en Supabase usando la API
   const res = await fetch('/api/shorten', {
     method: 'POST',
     headers: {

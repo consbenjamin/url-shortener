@@ -114,7 +114,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Feature 1 */}
+
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:bg-slate-800 transition-colors">
             <div className="h-12 w-12 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4">
               <Clock className="h-6 w-6 text-blue-400" />
@@ -125,7 +125,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Feature 2 */}
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:bg-slate-800 transition-colors">
             <div className="h-12 w-12 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-4">
               <BarChart3 className="h-6 w-6 text-cyan-400" />
@@ -136,7 +135,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Feature 3 */}
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:bg-slate-800 transition-colors">
             <div className="h-12 w-12 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4">
               <ExternalLink className="h-6 w-6 text-purple-400" />
@@ -147,7 +145,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
         <div className="container mx-auto p-6">
           <div className="border-t border-slate-800 pt-4 text-center text-slate-400">
             <p>© {new Date().getFullYear()} LinkBrief. Todos los derechos reservados.</p>

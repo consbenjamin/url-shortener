@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 
-// Iniciar sesión con correo y contraseña
+
 export const signInWithEmail = async (email, password) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -13,10 +13,10 @@ export const signInWithEmail = async (email, password) => {
   }
 
   console.log('Respuesta de autenticación:', data);
-  return data?.user; // Devuelve el usuario autenticado
+  return data?.user;
 };
 
-// Registrar un nuevo usuario con correo y contraseña
+
 export const signUpWithEmail = async (email, password) => {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -29,12 +29,11 @@ export const signUpWithEmail = async (email, password) => {
   }
 
   console.log('Usuario registrado correctamente:', data);
-  return data?.user; // Devuelve el usuario registrado
+  return data?.user;
 };
 
-// Cerrar sesión
+
 export const signOut = async () => {
-  // Elimina el token de Supabase en las cookies
   const { error } = await supabase.auth.signOut();
 
   if (error) {
@@ -42,22 +41,20 @@ export const signOut = async () => {
     return false;
   }
 
-  // También eliminamos el token de localStorage
-  localStorage.removeItem('supabase.auth.token');  // Elimina el token almacenado en localStorage
+  localStorage.removeItem('supabase.auth.token');
   console.log('Sesión cerrada correctamente');
 
   return true;
 };
-// Verificar si hay una sesión activa
+
 export async function checkSession() {
   const { data, error } = await supabase.auth.getUser();
   if (error || !data?.user) {
     return null;
   }
-  return data.user; // Asegurar que retornamos un objeto user con un id
+  return data.user;
 }
 
-// Obtener el usuario autenticado
 export const getUser = async () => {
   const { data: { user }, error } = await supabase.auth.getUser();
 
@@ -66,6 +63,6 @@ export const getUser = async () => {
     return null;
   }
 
-  return user; // Devuelve el usuario autenticado o null si no hay sesión
+  return user;
 };
 

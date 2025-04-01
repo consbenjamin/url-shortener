@@ -15,13 +15,11 @@ export async function POST(req) {
       return Response.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    // Obtener el usuario autenticado
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
       return Response.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    // Verificar si el slug ya está en uso
     if (shortCode) {
       const { data: existingSlug } = await supabase
         .from('short_urls')
